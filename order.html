@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order — Charme House</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <section class="order-page">
+    <p class="eyebrow">A LITTLE SOMETHING FOR YOU</p>
+    <h1>Let's make it <em>yours.</em></h1>
+    <p class="order-intro">Fill in the order form below. Your order summary will update automatically.</p>
+
+    <form id="orderForm">
+
+      <div class="form-section">
+        <span class="form-number">01</span>
+        <div class="form-content">
+          <h2>Your details</h2>
+
+          <label for="buyer">Full name</label>
+          <input id="buyer" type="text" placeholder="Your name" required>
+
+          <label for="phone">WhatsApp number</label>
+          <input id="phone" type="tel" placeholder="08xxxxxxxxxx" required>
+
+          <label for="address">Complete address</label>
+          <textarea id="address" placeholder="Street, house number, district, city..." required></textarea>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <span class="form-number">02</span>
+        <div class="form-content">
+          <h2>Choose your piece</h2>
+
+          <label for="item">Product</label>
+          <select id="item" required>
+            <option value="" data-price="0">Select an item</option>
+            <option value="Rosé Fleur Bangle" data-price="45000">Rosé Fleur Bangle — Rp45.000</option>
+            <option value="Meadow Bloom Bangle" data-price="40000">Meadow Bloom Bangle — Rp40.000</option>
+            <option value="Pearl Rosette Bangle" data-price="42000">Pearl Rosette Bangle — Rp42.000</option>
+            <option value="Rosie Pearl Necklace" data-price="50000">Rosie Pearl Necklace — Rp50.000</option>
+            <option value="Petite Charm Necklace" data-price="48000">Petite Charm Necklace — Rp48.000</option>
+            <option value="Fleur Ribbon Necklace" data-price="52000">Fleur Ribbon Necklace — Rp52.000</option>
+            <option value="Petal Drop Earrings" data-price="35000">Petal Drop Earrings — Rp35.000</option>
+            <option value="Rosie Pearl Earrings" data-price="38000">Rosie Pearl Earrings — Rp38.000</option>
+            <option value="Little Fleur Earrings" data-price="36000">Little Fleur Earrings — Rp36.000</option>
+          </select>
+
+          <label for="qty">Quantity</label>
+          <input id="qty" type="number" min="1" max="20" value="1" required>
+
+          <label for="delivery">Delivery method</label>
+          <select id="delivery">
+            <option value="Pickup" data-fee="0">Self pickup — Free</option>
+            <option value="Delivery" data-fee="10000">Delivery — Rp10.000 (sample fee)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <span class="form-number">03</span>
+        <div class="form-content">
+          <h2>Payment & notes</h2>
+
+          <label for="payment">Payment method</label>
+          <select id="payment" required>
+            <option value="">Choose payment</option>
+            <option>Cash</option>
+            <option>Bank transfer</option>
+            <option>E-wallet</option>
+          </select>
+
+          <label for="notes">Additional notes (optional)</label>
+          <textarea id="notes" placeholder="Colour preference or other notes..."></textarea>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <h2>Your order note ♡</h2>
+
+        <div class="sum-row">
+          <span>Item</span>
+          <b id="sumItem">Not selected</b>
+        </div>
+
+        <div class="sum-row">
+          <span>Price</span>
+          <b id="sumPrice">Rp0</b>
+        </div>
+
+        <div class="sum-row">
+          <span>Quantity</span>
+          <b id="sumQty">1</b>
+        </div>
+
+        <div class="sum-row">
+          <span>Delivery</span>
+          <b id="sumDelivery">Rp0</b>
+        </div>
+
+        <div class="sum-total">
+          <span>Total</span>
+          <b id="sumTotal">Rp0</b>
+        </div>
+      </div>
+
+      <button class="pill-button submit-order" type="submit">
+        SEND ORDER VIA WHATSAPP ↗
+      </button>
+
+    </form>
+
+    <p class="fine-print">*Prices, delivery fee, and payment options are sample details for this school project. Replace the admin WhatsApp number in the code before using.</p>
+  </section>
+
+<script>
+const item = document.getElementById('item');
+const qty = document.getElementById('qty');
+const delivery = document.getElementById('delivery');
+
+const money = n => 'Rp' + Number(n).toLocaleString('id-ID');
+
+function summary() {
+  const p = Number(item.options[item.selectedIndex].dataset.price || 0);
+  const q = Math.max(1, Number(qty.value) || 1);
+  const d = Number(delivery.options[delivery.selectedIndex].dataset.fee || 0);
+  const t = p * q + d;
+
+  document.getElementById('sumItem').textContent = item.value || 'Not selected';
+  document.getElementById('sumPrice').textContent = money(p);
+  document.getElementById('sumQty').textContent = q;
+  document.getElementById('sumDelivery').textContent = money(d);
+  document.getElementById('sumTotal').textContent = money(t);
+
+  return {p, q, d, t};
+}
+
+[item, qty, delivery].forEach(x => x.addEventListener('change', summary));
+qty.addEventListener('input', summary);
+
+summary();
+
+document.getElementById('orderForm').addEventListener('submit', e => {
+  e.preventDefault();
+
+  if (!item.value) {
+    alert('Please select a product.');
+    return;
+  }
+
+  const s = summary();
+
+  const msg = `CHARME HOUSE ORDER ♡
+Name: ${buyer.value}
+WhatsApp: ${phone.value}
+Address: ${document.getElementById('address').value}
+Product: ${item.value}
+Price: ${money(s.p)}
+Quantity: ${s.q}
+Delivery: ${delivery.value} (${money(s.d)})
+Payment: ${payment.value}
+Total: ${money(s.t)}
+Notes: ${notes.value || '-'}`;
+
+  const admin = '6281234567890';
+
+  window.open(
+    'https://wa.me/' + admin + '?text=' + encodeURIComponent(msg),
+    '_blank'
+  );
+});
+</script>
+
+</body>
+</html>
